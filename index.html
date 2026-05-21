@@ -166,6 +166,9 @@ tr:hover td{background:rgba(255,255,255,0.025)}
       <option value="ctr_desc">클릭률 높은순</option>
       <option value="ctr_asc">클릭률 낮은순</option>
       <option value="imp_desc">노출수 높은순</option>
+      <option value="imp_asc">노출수 낮은순</option>
+      <option value="click_desc">클릭수 높은순</option>
+      <option value="click_asc">클릭수 낮은순</option>
       <option value="conv_desc">구매완료 높은순</option>
       <option value="revenue_desc">매출 높은순</option>
       <option value="name_asc">상품명 순</option>
@@ -465,7 +468,8 @@ function renderTable() {
     roas_desc:(a,b)=>b.roas-a.roas, roas_asc:(a,b)=>a.roas-b.roas,
     cvr_desc:(a,b)=>b.cvr-a.cvr,   cvr_asc:(a,b)=>a.cvr-b.cvr,
     ctr_desc:(a,b)=>b.ctr-a.ctr,   ctr_asc:(a,b)=>a.ctr-b.ctr,
-    imp_desc:(a,b)=>b.imp-a.imp,   click_desc:(a,b)=>b.click-a.click,
+    imp_desc:(a,b)=>b.imp-a.imp,   imp_asc:(a,b)=>a.imp-b.imp,
+    click_desc:(a,b)=>b.click-a.click, click_asc:(a,b)=>a.click-b.click,
     conv_desc:(a,b)=>b.conv-a.conv, revenue_desc:(a,b)=>b.revenue-a.revenue,
     name_asc:(a,b)=>a.name.localeCompare(b.name,'ko'),
   };
