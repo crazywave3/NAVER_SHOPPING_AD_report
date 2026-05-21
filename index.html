@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이세븐 광고 성과 리포트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --surface2: #1c2030;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8eaf0;
+    --text-muted: #7a8099;
+    --text-dim: #454d66;
+    --accent: #4f8ef7;
+    --accent2: #7b5cf0;
+    --green: #22d07a;
+    --yellow: #f5c842;
+    --red: #f25c5c;
+    --green-bg: rgba(34,208,122,0.1);
+    --yellow-bg: rgba(245,200,66,0.1);
+    --red-bg: rgba(242,92,92,0.1);
+    --green-text: #22d07a;
+    --yellow-text: #f5c842;
+    --red-text: #f25c5c;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 24px 64px;
+  }
+
+  /* header */
+  .header {
+    max-width: 1100px;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .header-left p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+
+  /* summary cards */
+  .summary {
+    max-width: 1100px;
+    margin: 0 auto 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .card .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+  .card .val {
+    font-family: 'DM Mono', monospace;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  /* controls */
+  .controls {
+    max-width: 1100px;
+    margin: 0 auto 16px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .controls label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-right: 2px;
+  }
+  select {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8099' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+  select:focus { border-color: var(--accent); }
+
+  /* legend */
+  .legend {
+    max-width: 1100px;
+    margin: 0 auto 12px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+    align-items: center;
+  }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-green { background: var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-red { background: var(--red); }
+  .dot-gray { background: var(--text-dim); }
+
+  /* table wrapper */
+  .table-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 680px;
+  }
+  thead th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:hover { color: var(--text); }
+  thead th.active { color: var(--accent); }
+  th.num, td.num { text-align: right; }
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.025); }
+
+  .name-td {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .imp-td {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .click-td {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .conv-td {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* badges */
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    line-height: 1.4;
+    min-width: 62px;
+    text-align: center;
+  }
+  .badge-high { background: var(--green-bg); color: var(--green-text); }
+  .badge-mid  { background: var(--yellow-bg); color: var(--yellow-text); }
+  .badge-low  { background: var(--red-bg); color: var(--red-text); }
+  .badge-zero { background: rgba(255,255,255,0.04); color: var(--text-dim); }
+
+  /* rank */
+  .rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 28px;
+    text-align: right;
+    padding-right: 6px;
+  }
+
+  /* footer */
+  .footer {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* search */
+  .search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+    width: 15px; height: 15px;
+  }
+  #searchInput {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 6px 32px 6px 32px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+    width: 220px;
+    transition: border-color 0.15s, width 0.2s;
+  }
+  #searchInput::placeholder { color: var(--text-dim); }
+  #searchInput:focus { border-color: var(--accent); width: 280px; }
+  .search-clear {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    display: none;
+  }
+  .search-clear:hover { color: var(--text-muted); }
+  .highlight {
+    background: rgba(79,142,247,0.25);
+    color: var(--accent);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+  .no-result {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  /* mobile */
+  @media (max-width: 600px) {
+    body { padding: 20px 12px 48px; }
+    .card .val { font-size: 20px; }
+    .header-left h1 { font-size: 18px; }
+    #searchInput { width: 160px; }
+    #searchInput:focus { width: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="tag">NAVER SHOPPING AD</div>
+    <h1>데이세븐 광고 성과 리포트</h1>
+    <p>품목별 클릭률(CTR) · 전환율(CVR) 분석 — hendon_kr:naver / 계정 881972</p>
+  </div>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="상품명 검색..." oninput="onSearch(this.value)" autocomplete="off">
+    <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+  </div>
+  <label>정렬</label>
+  <select id="sortSel" onchange="render()">
+    <option value="cvr_desc">전환율 높은순</option>
+    <option value="cvr_asc">전환율 낮은순</option>
+    <option value="ctr_desc">클릭률 높은순</option>
+    <option value="ctr_asc">클릭률 낮은순</option>
+    <option value="imp_desc">노출수 높은순</option>
+    <option value="conv_desc">전환수 높은순</option>
+    <option value="name_asc">상품명 순</option>
+  </select>
+  <label>전환 필터</label>
+  <select id="convSel" onchange="render()">
+    <option value="all">전체</option>
+    <option value="conv">전환 있는 품목</option>
+    <option value="noconv">전환 없는 품목</option>
+  </select>
+</div>
+
+<div class="legend">
+  <span>클릭률 기준:</span>
+  <span><i class="dot dot-green"></i>2% 이상</span>
+  <span><i class="dot dot-yellow"></i>1~2%</span>
+  <span><i class="dot dot-red"></i>0~1%</span>
+  <span><i class="dot dot-gray"></i>0%</span>
+  &nbsp;|&nbsp;
+  <span>전환율 기준:</span>
+  <span><i class="dot dot-green"></i>25% 이상</span>
+  <span><i class="dot dot-yellow"></i>10~25%</span>
+  <span><i class="dot dot-red"></i>0~10%</span>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:32px">#</th>
+        <th>상품명</th>
+        <th class="num" onclick="setSortAndRender('imp_desc')">노출수</th>
+        <th class="num" onclick="setSortAndRender('click_desc')">클릭수</th>
+        <th class="num" onclick="setSortAndRender('ctr_desc')">클릭률</th>
+        <th class="num" onclick="setSortAndRender('conv_desc')">전환수</th>
+        <th class="num" onclick="setSortAndRender('cvr_desc')">전환율</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  <span id="footer-count"></span>
+  <span>클릭률 = 클릭수 ÷ 노출수 · 전환율 = 전환수 ÷ 클릭수</span>
+</div>
+
+<script>
+const raw = [
+  {name:"데이세븐 스마일 스텐 믹싱볼 (T)",imp:32,click:0,conv:0},
+  {name:"데이세븐 엑스 프라이팬 마블코팅 30cm",imp:44,click:0,conv:0},
+  {name:"데이세븐 엑스 프라이팬 마블코팅 26cm",imp:36,click:0,conv:0},
+  {name:"도담 주전자 7L",imp:2310,click:6,conv:0},
+  {name:"도담 주전자 (기본)",imp:2067,click:3,conv:0},
+  {name:"도담 주전자 3L",imp:1692,click:2,conv:0},
+  {name:"스텐 트레이 망 세트 특대형(40.5cm)",imp:3339,click:65,conv:18},
+  {name:"스텐 트레이 망 세트 대형(31.5cm)",imp:478,click:5,conv:0},
+  {name:"스텐 트레이 망 세트 (기본)",imp:343,click:0,conv:0},
+  {name:"스텐 트레이 뚜껑 세트 대형(31cm)",imp:379,click:0,conv:0},
+  {name:"스텐 트레이 뚜껑 세트 중형(26cm)",imp:311,click:0,conv:0},
+  {name:"케틀팟 차망 보리차 캠핑 (기본)",imp:6211,click:207,conv:60},
+  {name:"케틀팟 차망 보리차 캠핑 1.5L",imp:7242,click:139,conv:26},
+  {name:"골든버니 돔스티머",imp:2564,click:29,conv:2},
+  {name:"스텐 트레이 뚜껑 세트 소형(23.5cm)",imp:3220,click:22,conv:6},
+  {name:"믹싱볼 3종 세트",imp:18083,click:184,conv:37},
+  {name:"케틀셰프팟 찜기 이유식",imp:6811,click:65,conv:15},
+  {name:"IH 스텐 곰솥냄비",imp:2361,click:17,conv:0},
+  {name:"IH 대형 타워 곰솥 냄비 (L)",imp:7901,click:119,conv:13},
+  {name:"304 돔스티머",imp:2936,click:51,conv:14},
+  {name:"스텐 사각 트레이 투명뚜껑 밀폐용기",imp:12441,click:28,conv:16},
+  {name:"스텐 쌀 세척볼 (S)",imp:33483,click:145,conv:43},
+  {name:"스텐 2단 찜기 28cm",imp:3065,click:22,conv:3},
+  {name:"스텐컵 이중 진공 하이볼잔 550ml",imp:2068,click:76,conv:11},
+  {name:"스텐 타공 국자 뜰채",imp:6489,click:36,conv:6},
+  {name:"스텐 계량컵 눈금컵 500/1000ml",imp:7273,click:120,conv:37},
+  {name:"믹싱볼 트레이 채반 3종 세트",imp:2511,click:15,conv:4},
+  {name:"스텐 트레이 망 세트 소형(23.5cm)",imp:20644,click:200,conv:53},
+  {name:"스텐 미니국자 서빙스푼",imp:5363,click:88,conv:11},
+  {name:"토르 주전자 1.2L",imp:3758,click:56,conv:4},
+  {name:"믹싱볼+채반 세트",imp:16927,click:133,conv:43},
+  {name:"케틀팟 컬러 주전자 2L",imp:10539,click:29,conv:7},
+  {name:"도담 주전자 1.5L",imp:16342,click:239,conv:41},
+  {name:"멀티 잼팟 들통 9L",imp:9480,click:103,conv:13},
+  {name:"씨엘 냄비 세트 (신혼)",imp:3113,click:41,conv:4},
+  {name:"씨엘 라면 편수냄비 18cm",imp:4649,click:56,conv:3},
+  {name:"씨엘 양수냄비 20cm",imp:1331,click:12,conv:0},
+  {name:"씨엘 양수냄비 24cm",imp:4207,click:36,conv:1},
+  {name:"씨엘 전골냄비 24cm",imp:1161,click:12,conv:0},
+  {name:"분리형 캠핑 냄비 세트",imp:4224,click:52,conv:2},
+  {name:"비타 냄비세트",imp:1979,click:25,conv:1},
+  {name:"비타 밀크팬 14cm",imp:1501,click:10,conv:2},
+  {name:"도가 편수냄비 18cm",imp:3928,click:31,conv:10},
+  {name:"도가 양수냄비 24cm",imp:970,click:3,conv:0},
+  {name:"도가 계란말이팬 22cm",imp:374,click:3,conv:0},
+];
+
+function ctr(d){ return d.imp ? d.click/d.imp*100 : 0; }
+function cvr(d){ return d.click ? d.conv/d.click*100 : 0; }
+
+function badgeCtr(v){
+  const s = v.toFixed(2)+'%';
+  if(v===0) return `<span class="badge badge-zero">${s}</span>`;
+  if(v>=2)  return `<span class="badge badge-high">${s}</span>`;
+  if(v>=1)  return `<span class="badge badge-mid">${s}</span>`;
+  return `<span class="badge badge-low">${s}</span>`;
+}
+function badgeCvr(v){
+  const s = v.toFixed(2)+'%';
+  if(v===0) return `<span class="badge badge-zero">${s}</span>`;
+  if(v>=25) return `<span class="badge badge-high">${s}</span>`;
+  if(v>=10) return `<span class="badge badge-mid">${s}</span>`;
+  return `<span class="badge badge-low">${s}</span>`;
+}
+
+let searchQuery = '';
+
+function onSearch(val) {
+  searchQuery = val.trim();
+  document.getElementById('searchClear').style.display = searchQuery ? 'block' : 'none';
+  render();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  document.getElementById('searchClear').style.display = 'none';
+  render();
+}
+
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(escaped, 'gi'), m => `<span class="highlight">${m}</span>`);
+}
+
+function setSortAndRender(val){
+  document.getElementById('sortSel').value = val;
+  render();
+}
+
+function render(){
+  const sort = document.getElementById('sortSel').value;
+  const convF = document.getElementById('convSel').value;
+  let data = raw.map(d => ({...d, _ctr: ctr(d), _cvr: cvr(d)}));
+  if(searchQuery) data = data.filter(d => d.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  if(convF === 'conv') data = data.filter(d => d.conv > 0);
+  if(convF === 'noconv') data = data.filter(d => d.conv === 0);
+
+  const sorters = {
+    cvr_desc:  (a,b) => b._cvr - a._cvr,
+    cvr_asc:   (a,b) => a._cvr - b._cvr,
+    ctr_desc:  (a,b) => b._ctr - a._ctr,
+    ctr_asc:   (a,b) => a._ctr - b._ctr,
+    imp_desc:  (a,b) => b.imp - a.imp,
+    click_desc:(a,b) => b.click - a.click,
+    conv_desc: (a,b) => b.conv - a.conv,
+    name_asc:  (a,b) => a.name.localeCompare(b.name, 'ko'),
+  };
+  data.sort(sorters[sort] || sorters.cvr_desc);
+
+  const totalImp   = data.reduce((s,d) => s+d.imp, 0);
+  const totalClick = data.reduce((s,d) => s+d.click, 0);
+  const totalConv  = data.reduce((s,d) => s+d.conv, 0);
+  const avgCtr = totalImp  ? (totalClick/totalImp*100).toFixed(2) : '0.00';
+  const avgCvr = totalClick? (totalConv/totalClick*100).toFixed(2): '0.00';
+
+  document.getElementById('summary').innerHTML = `
+    <div class="card"><div class="label">총 품목수</div><div class="val">${data.length}<span style="font-size:14px;color:var(--text-muted)">개</span></div></div>
+    <div class="card"><div class="label">총 노출수</div><div class="val">${totalImp.toLocaleString()}</div></div>
+    <div class="card"><div class="label">총 클릭수</div><div class="val">${totalClick.toLocaleString()}</div></div>
+    <div class="card"><div class="label">평균 클릭률</div><div class="val">${avgCtr}<span style="font-size:14px;color:var(--text-muted)">%</span></div></div>
+    <div class="card"><div class="label">총 전환수</div><div class="val">${totalConv}</div></div>
+    <div class="card"><div class="label">평균 전환율</div><div class="val">${avgCvr}<span style="font-size:14px;color:var(--text-muted)">%</span></div></div>
+  `;
+
+  if(data.length === 0) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="7" class="no-result">검색 결과가 없습니다 — "<strong style="color:var(--text-muted)">${searchQuery}</strong>"</td></tr>`;
+    document.getElementById('footer-count').textContent = `0개 품목 표시 중`;
+    return;
+  }
+
+  document.getElementById('tbody').innerHTML = data.map((d,i) => `
+    <tr>
+      <td class="rank">${i+1}</td>
+      <td class="name-td" title="${d.name}">${highlight(d.name, searchQuery)}</td>
+      <td class="num imp-td">${d.imp.toLocaleString()}</td>
+      <td class="num click-td">${d.click.toLocaleString()}</td>
+      <td class="num">${badgeCtr(d._ctr)}</td>
+      <td class="num conv-td" style="color:${d.conv>0?'var(--text)':'var(--text-dim)'}">${d.conv}</td>
+      <td class="num">${badgeCvr(d._cvr)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('footer-count').textContent = searchQuery
+    ? `"${searchQuery}" 검색 결과 ${data.length}개`
+    : `총 ${data.length}개 품목 표시 중`;
+}
+
+render();
+</script>
+</body>
+</html>
